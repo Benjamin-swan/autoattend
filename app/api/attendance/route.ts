@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     const existing = await getTodayAttendance(email);
     if (existing) return NextResponse.json({ error: "이미 출근했습니다." }, { status: 400 });
     await clockIn(email, name);
-    await sendKakaoMessage(`[AutoAttend] ${name}님이 ${today} ${now}에 출근했습니다 ✅`);
+    await sendKakaoMessage(`[AutoAttend - 스마트 출퇴근]\n${name}님이 ${today} ${now} 에 출근했습니다 ✅`);
     return NextResponse.json({ ok: true });
   }
 
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
     if (!existing) return NextResponse.json({ error: "출근 기록이 없습니다." }, { status: 400 });
     if (existing.clock_out) return NextResponse.json({ error: "이미 퇴근했습니다." }, { status: 400 });
     await clockOut(email);
-    await sendKakaoMessage(`[AutoAttend] ${name}님이 ${today} ${now}에 퇴근했습니다 🏠`);
+    await sendKakaoMessage(`[AutoAttend - 스마트 출퇴근]\n${name}님이 ${today} ${now} 에 퇴근했습니다 🏠`);
     return NextResponse.json({ ok: true });
   }
 
