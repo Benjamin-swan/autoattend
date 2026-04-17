@@ -7,6 +7,7 @@ import bcrypt from "bcryptjs";
 import { getUsers } from "@/lib/sheets";
 
 export const authOptions = {
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     CredentialsProvider({
       name: "credentials",
