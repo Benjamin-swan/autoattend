@@ -1,10 +1,23 @@
 "use client";
 import { signIn } from "next-auth/react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Mail, Lock, AlertCircle, Loader2 } from "lucide-react";
+
+const QUOTES = [
+  "지금 당장 만들어라.",
+  "사용자와 대화하라.",
+  "작게 시작해도 된다.",
+  "출시하지 않으면 아무 의미 없다.",
+  "완벽함보다 실행이 먼저다.",
+  "진짜 문제를 풀어라.",
+  "모르면 직접 물어봐라.",
+  "느리더라도 매일 전진하라.",
+  "단순하게 유지하라.",
+  "지금이 가장 좋은 시작 타이밍이다.",
+];
 
 export default function LoginPage() {
   const router = useRouter();
@@ -12,6 +25,8 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const quote = useMemo(() => QUOTES[Math.floor(Math.random() * QUOTES.length)], []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -35,8 +50,8 @@ export default function LoginPage() {
             <Image src="/logo.svg" alt="AutoAttend" width={32} height={32} className="rounded-lg" />
             <span className="text-white font-semibold">AutoAttend</span>
           </div>
-          <h1 className="text-2xl font-semibold text-white">다시 오셨군요</h1>
-          <p className="text-zinc-500 text-sm mt-1">계정에 로그인하세요</p>
+          <h1 className="text-2xl font-semibold text-white leading-snug">"{quote}"</h1>
+          <p className="text-zinc-500 text-sm mt-2">계정에 로그인하세요</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-3">
