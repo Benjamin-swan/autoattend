@@ -31,7 +31,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen min-h-dvh bg-[#0f0f0f] flex items-center justify-center px-5 py-8">
+    <div className="min-h-screen bg-[#0f0f0f] flex items-center justify-center px-5" style={{ paddingTop: "max(2rem, env(safe-area-inset-top))", paddingBottom: "max(2rem, env(safe-area-inset-bottom))" }}>
       <div className="w-full max-w-sm">
         <div className="mb-10">
           <div className="flex items-center gap-2 mb-6">

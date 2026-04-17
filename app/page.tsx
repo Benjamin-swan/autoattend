@@ -94,7 +94,7 @@ export default function HomePage() {
   const hasClockedOut = !!record?.clock_out;
 
   return (
-    <div className="min-h-screen min-h-dvh bg-[#0f0f0f] flex flex-col items-center justify-center px-5 py-8 safe-area-inset">
+    <div className="min-h-screen bg-[#0f0f0f] flex flex-col items-center justify-center px-5 py-8" style={{ paddingBottom: "max(2rem, env(safe-area-inset-bottom))", paddingTop: "max(2rem, env(safe-area-inset-top))" }}>
       <div className="w-full max-w-sm">
 
         {/* 헤더 */}

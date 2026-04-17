@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
@@ -13,20 +13,36 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  // Android Chrome, Samsung Internet 주소창 색상
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#0f0f0f" },
+    { media: "(prefers-color-scheme: light)", color: "#0f0f0f" },
+  ],
+};
+
 export const metadata: Metadata = {
   title: "AutoAttend — 스마트 출퇴근 관리",
   description: "온라인 출퇴근 관리 시스템",
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-  },
+  // iOS Safari 홈 화면 추가
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
     title: "AutoAttend",
   },
+  // iOS가 전화번호/이메일 자동 링크 변환 방지
+  formatDetection: {
+    telephone: false,
+    email: false,
+    address: false,
+  },
+  // Android Chrome 홈 화면 추가 (PWA 없이도 동작)
+  applicationName: "AutoAttend",
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
@@ -36,7 +52,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col bg-[#0f0f0f] overscroll-none">
         <Providers>{children}</Providers>
       </body>
     </html>
