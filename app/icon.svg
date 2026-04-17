@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <!-- 배경 -->
+  <rect width="48" height="48" rx="12" fill="white"/>
+  <!-- 시계 원 -->
+  <circle cx="24" cy="24" r="13" stroke="black" stroke-width="2.5" fill="none"/>
+  <!-- 12시 눈금 -->
+  <line x1="24" y1="13" x2="24" y2="16" stroke="black" stroke-width="2" stroke-linecap="round"/>
+  <!-- 시침 (10시 방향) -->
+  <line x1="24" y1="24" x2="18.5" y2="18.5" stroke="black" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- 분침 (12시 방향) -->
+  <line x1="24" y1="24" x2="24" y2="15.5" stroke="black" stroke-width="2" stroke-linecap="round"/>
+  <!-- 체크 표시 (오른쪽 하단) -->
+  <circle cx="33" cy="33" r="7" fill="black"/>
+  <polyline points="29.5,33 32,35.5 36.5,30.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>

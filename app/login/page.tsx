@@ -3,7 +3,8 @@ import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Clock, Mail, Lock, AlertCircle, Loader2 } from "lucide-react";
+import Image from "next/image";
+import { Mail, Lock, AlertCircle, Loader2 } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -31,9 +32,7 @@ export default function LoginPage() {
         {/* 로고 */}
         <div className="mb-10">
           <div className="flex items-center gap-2 mb-6">
-            <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-              <Clock className="w-4 h-4 text-black" />
-            </div>
+            <Image src="/logo.svg" alt="AutoAttend" width={32} height={32} className="rounded-lg" />
             <span className="text-white font-semibold">AutoAttend</span>
           </div>
           <h1 className="text-2xl font-semibold text-white">다시 오셨군요</h1>

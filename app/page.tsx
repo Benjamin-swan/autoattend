@@ -2,8 +2,9 @@
 import { useSession, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import {
-  Clock, LogOut, CheckCircle2, Timer,
+  LogOut, CheckCircle2, Timer,
   LogIn, LogOut as LogOutIcon, AlertCircle, Loader2,
   Bell, UserX, TriangleAlert,
 } from "lucide-react";
@@ -100,9 +101,7 @@ export default function HomePage() {
         {/* 헤더 */}
         <div className="flex items-center justify-between mb-10">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-white rounded-md flex items-center justify-center">
-              <Clock className="w-3.5 h-3.5 text-black" />
-            </div>
+            <Image src="/logo.svg" alt="AutoAttend" width={28} height={28} className="rounded-md" />
             <span className="text-white font-semibold text-sm tracking-tight">AutoAttend</span>
           </div>
           <button
