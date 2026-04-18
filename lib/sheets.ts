@@ -48,6 +48,69 @@ export async function initSheets() {
       requestBody: { values: [["id", "user_email", "name", "date", "clock_in", "clock_out", "work_hours"]] },
     });
   }
+
+  if (!titles.includes("config")) {
+    await sheets.spreadsheets.batchUpdate({
+      spreadsheetId: SHEET_ID,
+      requestBody: {
+        requests: [{ addSheet: { properties: { title: "config" } } }],
+      },
+    });
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: SHEET_ID,
+      range: "config!A1:B1",
+      valueInputOption: "RAW",
+      requestBody: { values: [["key", "value"]] },
+    });
+    // 초기 토큰값 환경변수에서 삽입
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: SHEET_ID,
+      range: "config!A:B",
+      valueInputOption: "RAW",
+      requestBody: {
+        values: [
+          ["kakao_access_token", process.env.KAKAO_ACCESS_TOKEN ?? ""],
+          ["kakao_refresh_token", process.env.KAKAO_REFRESH_TOKEN ?? ""],
+        ],
+      },
+    });
+  }
+}
+
+export async function getConfig(key: string): Promise<string | null> {
+  const sheets = getSheets();
+  const res = await sheets.spreadsheets.values.get({
+    spreadsheetId: SHEET_ID,
+    range: "config!A2:B",
+  });
+  const row = (res.data.values ?? []).find((r) => r[0] === key);
+  return row?.[1] ?? null;
+}
+
+export async function setConfig(key: string, value: string): Promise<void> {
+  const sheets = getSheets();
+  const res = await sheets.spreadsheets.values.get({
+    spreadsheetId: SHEET_ID,
+    range: "config!A2:B",
+  });
+  const rows = res.data.values ?? [];
+  const rowIndex = rows.findIndex((r) => r[0] === key);
+
+  if (rowIndex === -1) {
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: SHEET_ID,
+      range: "config!A:B",
+      valueInputOption: "RAW",
+      requestBody: { values: [[key, value]] },
+    });
+  } else {
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: SHEET_ID,
+      range: `config!B${rowIndex + 2}`,
+      valueInputOption: "RAW",
+      requestBody: { values: [[value]] },
+    });
+  }
 }
 
 export async function getUsers(): Promise<any[]> {

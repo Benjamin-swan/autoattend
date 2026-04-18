@@ -1,6 +1,14 @@
+import { getConfig, setConfig } from "@/lib/sheets";
+
+async function getAccessToken(): Promise<string> {
+  const token = await getConfig("kakao_access_token");
+  return token ?? process.env.KAKAO_ACCESS_TOKEN ?? "";
+}
+
 async function refreshAccessToken(): Promise<string | null> {
-  const refreshToken = process.env.KAKAO_REFRESH_TOKEN;
+  const refreshToken = await getConfig("kakao_refresh_token") ?? process.env.KAKAO_REFRESH_TOKEN;
   const restApiKey = process.env.KAKAO_REST_API_KEY;
+  const clientSecret = process.env.KAKAO_CLIENT_SECRET;
   if (!refreshToken || !restApiKey) return null;
 
   const res = await fetch("https://kauth.kakao.com/oauth/token", {
@@ -9,13 +17,20 @@ async function refreshAccessToken(): Promise<string | null> {
     body: new URLSearchParams({
       grant_type: "refresh_token",
       client_id: restApiKey,
+      ...(clientSecret ? { client_secret: clientSecret } : {}),
       refresh_token: refreshToken,
     }),
   });
   const data = await res.json();
+
   if (data.access_token) {
+    await setConfig("kakao_access_token", data.access_token);
+    if (data.refresh_token) {
+      await setConfig("kakao_refresh_token", data.refresh_token);
+    }
     return data.access_token;
   }
+
   console.error("카카오 토큰 갱신 실패:", data);
   return null;
 }
@@ -31,7 +46,7 @@ async function sendWithToken(text: string, token: string): Promise<{ result_code
       template_object: JSON.stringify({
         object_type: "text",
         text,
-        link: { web_url: process.env.NEXTAUTH_URL ?? "http://localhost:3000" },
+        link: { web_url: process.env.NEXTAUTH_URL ?? "https://autoattendk.vercel.app" },
       }),
     }),
   });
@@ -39,7 +54,7 @@ async function sendWithToken(text: string, token: string): Promise<{ result_code
 }
 
 export async function sendKakaoMessage(text: string) {
-  let token = process.env.KAKAO_ACCESS_TOKEN;
+  let token = await getAccessToken();
   if (!token) {
     console.error("KAKAO_ACCESS_TOKEN 없음");
     return;
@@ -47,7 +62,6 @@ export async function sendKakaoMessage(text: string) {
 
   let data = await sendWithToken(text, token);
 
-  // 401 (토큰 만료) 시 갱신 후 재시도
   if (data.result_code !== 0) {
     const newToken = await refreshAccessToken();
     if (newToken) {
