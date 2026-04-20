@@ -143,17 +143,17 @@ export async function addUser(user: { name: string; email: string; password_hash
   });
 }
 
-export async function getTodayAttendance(email: string): Promise<any | null> {
+export async function getLatestAttendance(email: string): Promise<any | null> {
   const sheets = getSheets();
-  const today = getKSTDate();
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId: SHEET_ID,
     range: "attendance!A2:G",
   });
   const rows = res.data.values ?? [];
-  const row = rows.find((r) => r[1] === email && r[3] === today);
-  if (!row) return null;
-  return { id: row[0], user_email: row[1], name: row[2], date: row[3], clock_in: row[4], clock_out: row[5], work_hours: row[6] };
+  const userRows = rows.filter((r) => r[1] === email);
+  if (userRows.length === 0) return null;
+  const lastRow = userRows[userRows.length - 1];
+  return { id: lastRow[0], user_email: lastRow[1], name: lastRow[2], date: lastRow[3], clock_in: lastRow[4], clock_out: lastRow[5], work_hours: lastRow[6] };
 }
 
 export async function clockIn(email: string, name: string) {
@@ -172,14 +172,18 @@ export async function clockIn(email: string, name: string) {
 
 export async function clockOut(email: string) {
   const sheets = getSheets();
-  const today = getKSTDate();
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId: SHEET_ID,
     range: "attendance!A2:G",
   });
   const rows = res.data.values ?? [];
-  const rowIndex = rows.findIndex((r) => r[1] === email && r[3] === today);
-  if (rowIndex === -1) throw new Error("출근 기록 없음");
+  const userRows = rows.filter((r) => r[1] === email);
+  if (userRows.length === 0) throw new Error("출근 기록 없음");
+
+  const lastRow = userRows[userRows.length - 1];
+  if (lastRow[5]) throw new Error("이미 퇴근했습니다");
+
+  const rowIndex = rows.findIndex((r) => r === lastRow);
 
   const clockInTime = rows[rowIndex][4];
   const now = getKSTTime();
@@ -245,7 +249,7 @@ function getKSTTime(): string {
 function calcWorkHours(start: string, end: string): string {
   const [sh, sm] = start.split(":").map(Number);
   const [eh, em] = end.split(":").map(Number);
-  const diff = (eh * 60 + em) - (sh * 60 + sm);
-  if (diff < 0) return "-";
+  let diff = (eh * 60 + em) - (sh * 60 + sm);
+  if (diff < 0) diff += 24 * 60; // 자정을 넘긴 경우 24시간 추가
   return `${Math.floor(diff / 60)}h ${diff % 60}m`;
 }
